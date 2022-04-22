@@ -47,15 +47,17 @@ const box = (cake: Cake, startDay: PlainDateTime) => {
   return startDay.add({ days: leadTime });
 };
 
+const combine =
+  (...args: ReturnType<typeof process>[]) =>
+  (cake: Cake, d: PlainDateTime) =>
+    args.reduce((start, f) => f(cake, start), d);
+
 const latest = (a: PlainDateTime, b: PlainDateTime) => {
   return PlainDateTime.compare(a, b) > 0 ? a : b;
 };
 
 export const order = (cake: Cake, d: PlainDateTime) => {
   const startDay = d.hour < 12 ? d : d.add({ days: 1 });
-  const baked = bake(cake, startDay);
-  const frosted = frost(cake, baked);
-  const boxed = box(cake, d);
-  const withNuts = addNuts(cake, frosted);
-  return latest(withNuts, boxed);
+  const makeCake = combine(bake, frost, addNuts);
+  return latest(makeCake(cake, startDay), box(cake, d));
 };
