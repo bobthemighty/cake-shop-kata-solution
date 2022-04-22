@@ -1,8 +1,8 @@
-import type {Temporal} from "temporal-polyfill"
+import type { DateArg } from "temporal-polyfill";
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toBeDelivered(received:, )
+      toBeDelivered(expected: DateArg): CustomMatcherResult;
     }
   }
 }
