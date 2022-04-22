@@ -72,3 +72,24 @@ test("An order for a big cake with a fancy box, placed on Monday afternoon, has 
     order({ size: "big", extras: ["box"] }, afternoon(Monday))
   ).toBeDeliveredOn(Thursday);
 });
+
+test("An order for a small cake with nuts placed on Monday morning has a delivery date of Wednesday", () => {
+  expect(
+    order({ size: "small", extras: ["nuts"] }, morning(Monday))
+  ).toBeDeliveredOn(Wednesday);
+});
+
+test("An order for a small cake with frosting placed on Monday morning has a delivery date of Friday", () => {
+  expect(
+    order({ size: "small", extras: ["nuts", "frosting"] }, morning(Monday))
+  ).toBeDeliveredOn(Friday);
+});
+
+test("An order for a small cake with frosting, in a fancy box, placed on Tuesday morning, has a delivery date of Monday ", () => {
+  expect(
+    order(
+      { size: "small", extras: ["nuts", "frosting", "box"] },
+      morning(Tuesday)
+    )
+  ).toBeDeliveredOn(following(Monday));
+});

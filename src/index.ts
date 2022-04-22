@@ -1,7 +1,7 @@
 import { DateArg, PlainDate, PlainDateTime } from "temporal-polyfill";
 
 type Size = "small" | "big";
-type Extra = "frosting" | "box";
+type Extra = "frosting" | "box" | "nuts";
 
 type Cake = {
   size: Size;
@@ -28,6 +28,16 @@ const frost = (cake: Cake, startDay: PlainDateTime) => {
   return deliveryDay;
 };
 
+const addNuts = (cake: Cake, startDay: PlainDateTime) => {
+  let leadTime = cake.extras?.includes("nuts") ? 1 : 0;
+  let deliveryDay = startDay;
+  while (leadTime > 0) {
+    deliveryDay = deliveryDay.add({ days: 1 });
+    if (deliveryDay.dayOfWeek < 6) leadTime--;
+  }
+  return deliveryDay;
+};
+
 const box = (cake: Cake, startDay: PlainDateTime) => {
   const leadTime = cake.extras?.includes("box") ? 2 : 0;
   return startDay.add({ days: leadTime });
@@ -42,5 +52,6 @@ export const order = (cake: Cake, d: PlainDateTime) => {
   const baked = bake(cake, startDay);
   const frosted = frost(cake, baked);
   const boxed = box(cake, d);
-  return latest(frosted, boxed);
+  const withNuts = addNuts(cake, frosted);
+  return latest(withNuts, boxed);
 };
