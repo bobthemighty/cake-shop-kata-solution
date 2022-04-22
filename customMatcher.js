@@ -6,7 +6,7 @@ expect.extend({
         message: () =>
           `Expected ${expected.toLocaleString()} but received undefined`,
       };
-    if (received.equals(expected)) return { pass: true };
+    if (expected.equals(received)) return { pass: true };
 
     return {
       pass: false,
