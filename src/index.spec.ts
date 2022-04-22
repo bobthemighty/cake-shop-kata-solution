@@ -73,23 +73,72 @@ test("An order for a big cake with a fancy box, placed on Monday afternoon, has 
   ).toBeDeliveredOn(Thursday);
 });
 
-test("An order for a small cake with nuts placed on Monday morning has a delivery date of Wednesday", () => {
-  expect(
-    order({ size: "small", extras: ["nuts"] }, morning(Monday))
-  ).toBeDeliveredOn(Wednesday);
+describe("Cakes with nuts", () => {
+  test("An order for a small cake with nuts placed on Monday morning has a delivery date of Wednesday", () => {
+    expect(
+      order({ size: "small", extras: ["nuts"] }, morning(Monday))
+    ).toBeDeliveredOn(Wednesday);
+  });
+
+  test("An order for a small cake with frosting placed on Monday morning has a delivery date of Friday", () => {
+    expect(
+      order({ size: "small", extras: ["nuts", "frosting"] }, morning(Monday))
+    ).toBeDeliveredOn(Friday);
+  });
+
+  test("An order for a small cake with frosting, in a fancy box, placed on Tuesday morning, has a delivery date of Monday ", () => {
+    expect(
+      order(
+        { size: "small", extras: ["nuts", "frosting", "box"] },
+        morning(Tuesday)
+      )
+    ).toBeDeliveredOn(following(Monday));
+  });
 });
 
-test("An order for a small cake with frosting placed on Monday morning has a delivery date of Friday", () => {
-  expect(
-    order({ size: "small", extras: ["nuts", "frosting"] }, morning(Monday))
-  ).toBeDeliveredOn(Friday);
-});
+describe("Xmas closing", () => {
+  test("A small cake ordered on the 22nd of December has a delivery date of 3rd Jan", () => {
+    expect(
+      order(
+        { size: "small" },
+        PlainDateTime.from({ day: 22, month: 12, year: 2022 })
+      )
+    ).toBeDeliveredOn(PlainDateTime.from({ day: 3, month: 1, year: 2023 }));
+  });
 
-test("An order for a small cake with frosting, in a fancy box, placed on Tuesday morning, has a delivery date of Monday ", () => {
-  expect(
-    order(
-      { size: "small", extras: ["nuts", "frosting", "box"] },
-      morning(Tuesday)
-    )
-  ).toBeDeliveredOn(following(Monday));
+  test("A small cake ordered on 22nd December 2021 has a delivery date of 4th of Jan ", () => {
+    expect(
+      order(
+        { size: "small" },
+        PlainDateTime.from({ day: 22, month: 12, year: 2021 })
+      )
+    ).toBeDeliveredOn(PlainDateTime.from({ day: 4, month: 1, year: 2022 }));
+  });
+
+  test("A small cake ordered on the morning 21st of December has a delivery date of 22nd December", () => {
+    expect(
+      order(
+        { size: "small" },
+        PlainDateTime.from({ day: 21, month: 12, year: 2022 })
+      )
+    ).toBeDeliveredOn(PlainDateTime.from({ day: 22, month: 12, year: 2022 }));
+  });
+
+  test("A small cake with fancy box, ordered on the 22nd of December, has a delivery date of 3rd Jan ", () => {
+    expect(
+      order(
+        { size: "small", extras: ["box"] },
+        PlainDateTime.from({ day: 22, month: 12, year: 2022 })
+      )
+    ).toBeDeliveredOn(PlainDateTime.from({ day: 3, month: 1, year: 2023 }));
+  });
+
+  test("A small cake with a fancy box, ordered on the 21st of December has a delivery date of 3rd January", () => {
+    expect(
+      order(
+        { size: "small", extras: ["box"] },
+        PlainDateTime.from({ day: 21, month: 12, year: 2022 })
+      )
+    ).toBeDeliveredOn(PlainDateTime.from({ day: 3, month: 1, year: 2023 }));
+  });
 });
