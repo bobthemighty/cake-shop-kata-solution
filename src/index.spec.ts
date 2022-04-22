@@ -60,6 +60,10 @@ test("Marco doesn't work on weekends'", () => {
   expect(order({ size: "small" }, morning(Friday))).toBeDeliveredOn(
     following(Monday)
   );
+
+  expect(
+    order({ size: "small", extras: ["frosting"] }, morning(Friday))
+  ).toBeDeliveredOn(following(Wednesday));
 });
 
 test("Custom frosting adds two days", () => {
