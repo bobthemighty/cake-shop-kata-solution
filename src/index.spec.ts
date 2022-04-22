@@ -31,8 +31,13 @@ const bake = (cake: Cake, startDay: PlainDateTime) => {
 };
 
 const frost = (cake: Cake, startDay: PlainDateTime) => {
-  if (!cake.extras?.includes("frosting")) return startDay;
-  return startDay.add({ days: 2 });
+  let leadTime = cake.extras?.includes("frosting") ? 2 : 0;
+  let deliveryDay = startDay;
+  while (leadTime > 0) {
+    deliveryDay = deliveryDay.add({ days: 1 });
+    if (![1, 7].includes(deliveryDay.dayOfWeek)) leadTime--;
+  }
+  return deliveryDay;
 };
 
 const order = (cake: Cake, d: PlainDateTime) => {
@@ -56,6 +61,12 @@ test("orders received before 12pm start baking the same day", () => {
   expect(order({ size: "small" }, morning(Monday))).toBeDeliveredOn(Tuesday);
 });
 
+test("Custom frosting adds two days", () => {
+  expect(
+    order({ size: "small", extras: ["frosting"] }, morning(Monday))
+  ).toBeDeliveredOn(Thursday);
+});
+
 test("Marco doesn't work on weekends'", () => {
   expect(order({ size: "small" }, morning(Friday))).toBeDeliveredOn(
     following(Monday)
@@ -66,8 +77,14 @@ test("Marco doesn't work on weekends'", () => {
   ).toBeDeliveredOn(following(Wednesday));
 });
 
-test("Custom frosting adds two days", () => {
+test("Sandro works Tuesday -> Saturday", () => {
   expect(
-    order({ size: "small", extras: ["frosting"] }, morning(Monday))
-  ).toBeDeliveredOn(Thursday);
+    order(
+      {
+        size: "big",
+        extras: ["frosting"],
+      },
+      afternoon(Tuesday)
+    )
+  ).toBeDeliveredOn(following(Tuesday));
 });
